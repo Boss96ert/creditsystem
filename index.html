@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Creditsystem</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="container header-content">
+            <div>
+                <div class="eyebrow">FUSSBALLMANNSCHAFT</div>
+                <h1>Creditsystem</h1>
+                <p class="header-subtitle">Saison 2026/27</p>
+            </div>
+        </div>
+    </header>
+
+
+    <main class="container">
+
+        <!-- Übersicht -->
+        <section id="overviewPage">
+
+            <div class="hero-card">
+                <div>
+                    <span class="hero-label">TEAMÜBERSICHT</span>
+                    <h2>Unsere Credits</h2>
+                    <p>
+                        Hier siehst du den aktuellen Stand aller Spieler.
+                    </p>
+                </div>
+            </div>
+
+
+            <!-- Statistik -->
+            <section class="stats-grid">
+
+                <div class="stat-card">
+                    <span class="stat-label">SPIELER</span>
+                    <strong id="playerCount">–</strong>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">CREDITS GESAMT</span>
+                    <strong id="totalCredits">–</strong>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">ZIEL GESAMT</span>
+                    <strong id="totalTarget">–</strong>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">FORTSCHRITT</span>
+                    <strong id="teamProgress">–</strong>
+                </div>
+
+            </section>
+
+
+            <!-- Suche -->
+            <section class="search-section">
+
+                <label for="searchInput">Spieler suchen</label>
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Name eingeben..."
+                >
+
+            </section>
+
+
+            <!-- Spieler -->
+            <section>
+
+                <div class="section-heading">
+                    <div>
+                        <span class="section-label">SPIELER</span>
+                        <h2>Credits-Übersicht</h2>
+                    </div>
+                </div>
+
+                <div id="playerList" class="player-list">
+                    <div class="loading">
+                        Daten werden geladen...
+                    </div>
+                </div>
+
+            </section>
+
+
+            <!-- Team Fortschritt -->
+            <section class="chart-section">
+
+                <div class="section-heading">
+                    <div>
+                        <span class="section-label">TEAM</span>
+                        <h2>Fortschritt</h2>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <canvas id="teamChart"></canvas>
+                </div>
+
+            </section>
+
+        </section>
+
+
+        <!-- Detailseite -->
+        <section id="detailPage" class="hidden">
+
+            <button id="backButton" class="back-button">
+                ← Zurück zur Übersicht
+            </button>
+
+
+            <div id="playerDetail"></div>
+
+
+            <section class="chart-section">
+
+                <div class="section-heading">
+                    <div>
+                        <span class="section-label">ENTWICKLUNG</span>
+                        <h2>Credit-Verlauf</h2>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <canvas id="playerChart"></canvas>
+                </div>
+
+            </section>
+
+        </section>
+
+
+        <!-- Fehler -->
+        <div id="errorBox" class="error-box hidden"></div>
+
+    </main>
+
+
+    <footer class="footer">
+        <div class="container">
+            Creditsystem · Saison 2026/27
+        </div>
+    </footer>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>
