@@ -6,7 +6,7 @@
 const CONFIG = {
 
     // HIER SPÄTER DIE ID DEINER GOOGLE-TABELLE EINTRAGEN
-    SHEET_ID: "DEINE_GOOGLE_SHEETS_ID",
+    SHEET_ID: "1gBgckt8jRzHv_xN20TkOCXHA1Kt2McGiYqVvfju7meY",
 
     // Namen der Tabellenblätter
     PLAYERS_SHEET: "Spieler",
