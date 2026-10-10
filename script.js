@@ -470,19 +470,19 @@ function normalizeAssignments(data) {
 // Credits berechnen
 // =====================================================
 
+
 function calculateCredits() {
 
     players.forEach(player => {
 
+        // 1. Normale Einsatz-Credits berechnen
         const playerAssignments =
             assignments.filter(
                 assignment =>
-                    assignment.playerId ===
-                    player.id
+                    assignment.playerId === player.id
             );
 
-
-        player.credits =
+        const assignmentCredits =
             playerAssignments.reduce(
                 (sum, assignment) =>
                     sum + assignment.credits,
@@ -490,24 +490,64 @@ function calculateCredits() {
             );
 
 
-        player.missing =
-            Math.max(
-                0,
-                player.target -
-                player.credits
+        // 2. Saisonale Arbeitsdienste des Spielers finden
+        const playerWorkDuties =
+            workDuties.filter(duty =>
+                String(duty.SpielerID).trim() ===
+                    String(player.id).trim() &&
+
+                String(duty.Saison).trim() ===
+                    CONFIG.SEASON &&
+
+                String(duty.Anrechnen).trim().toUpperCase() ===
+                    "JA"
             );
 
 
+        // 3. Credits aus Arbeitsdiensten berechnen
+        const workDutyCredits =
+            playerWorkDuties.reduce(
+                (sum, duty) => {
+                    const credits =
+                        Number(
+                            String(duty.Credits)
+                                .replace(",", ".")
+                                .trim()
+                        ) || 0;
+
+                    return sum + credits;
+                },
+                0
+            );
+
+
+        // 4. Beide Credit-Arten zusammenzählen
+        player.assignmentCredits =
+            assignmentCredits;
+
+        player.workDutyCredits =
+            workDutyCredits;
+
+        player.credits =
+            assignmentCredits + workDutyCredits;
+
+
+        // 5. Fehlende Credits berechnen
+        player.missing =
+            Math.max(
+                0,
+                player.target - player.credits
+            );
+
+
+        // 6. Fortschritt in Prozent berechnen
         if (player.target > 0) {
 
             player.progress =
                 Math.min(
                     100,
                     Math.round(
-                        (
-                            player.credits /
-                            player.target
-                        ) * 100
+                        (player.credits / player.target) * 100
                     )
                 );
 
@@ -518,7 +558,9 @@ function calculateCredits() {
         }
 
     });
+
 }
+
 
 
 // =====================================================
