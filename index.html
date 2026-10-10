@@ -66,15 +66,32 @@
 
             <!-- Suche -->
             <section class="search-section">
-
+            
                 <label for="searchInput">Spieler suchen</label>
-
+            
                 <input
                     type="text"
                     id="searchInput"
                     placeholder="Name eingeben..."
                 >
-
+            
+                <label for="playerFilter">Spieler filtern</label>
+            
+                <select id="playerFilter">
+                    <option value="all">Alle Spieler</option>
+                    <option value="open">Ziel noch nicht erreicht</option>
+                    <option value="completed">Ziel erreicht</option>
+                </select>
+            
+                <label for="playerSort">Sortierung</label>
+            
+                <select id="playerSort">
+                    <option value="credits">Rangliste – Credits</option>
+                    <option value="name">Alphabetisch – Name</option>
+                    <option value="progress">Fortschritt – Prozent</option>
+                    <option value="remaining">Fehlende Credits</option>
+                </select>
+            
             </section>
 
 
