@@ -55,41 +55,60 @@ document.addEventListener("DOMContentLoaded", () => {
 // Buttons / Suche
 // =====================================================
 
+
 function setupEvents() {
 
     const searchInput =
         document.getElementById("searchInput");
 
-    if (searchInput) {
+    const playerFilter =
+        document.getElementById("playerFilter");
 
-        searchInput.addEventListener(
-            "input",
-            () => {
+    const playerSort =
+        document.getElementById("playerSort");
 
-                renderPlayers(
-                    searchInput.value
-                );
-
-            }
+    function updatePlayerList() {
+        renderPlayers(
+            searchInput ? searchInput.value : "",
+            playerFilter ? playerFilter.value : "all",
+            playerSort ? playerSort.value : "credits"
         );
     }
 
+    if (searchInput) {
+        searchInput.addEventListener(
+            "input",
+            updatePlayerList
+        );
+    }
+
+    if (playerFilter) {
+        playerFilter.addEventListener(
+            "change",
+            updatePlayerList
+        );
+    }
+
+    if (playerSort) {
+        playerSort.addEventListener(
+            "change",
+            updatePlayerList
+        );
+    }
 
     const backButton =
         document.getElementById("backButton");
 
     if (backButton) {
-
         backButton.addEventListener(
             "click",
             () => {
-
                 showOverview();
-
             }
         );
     }
 }
+
 
 
 // =====================================================
