@@ -608,75 +608,95 @@ function updateStatistics() {
 // Spieler anzeigen
 // =====================================================
 
-function renderPlayers(search = "") {
 
+function renderPlayers(
+    search = "",
+    filter = "all",
+    sort = "credits"
+) {
     const container =
-        document.getElementById(
-            "playerList"
-        );
-
+        document.getElementById("playerList");
 
     if (!container) return;
 
+    const searchText = search.toLowerCase().trim();
 
-    const searchText =
-        search
+    // Rangliste nach Credits erstellen
+    const ranking = [...players].sort(
+        (a, b) => b.credits - a.credits
+    );
+
+    // Spieler suchen und filtern
+    let filteredPlayers = ranking.filter(player => {
+        const matchesSearch = player.name
             .toLowerCase()
-            .trim();
+            .includes(searchText);
 
+        const matchesFilter =
+            filter === "open"
+                ? player.missing > 0
+                : filter === "completed"
+                    ? player.missing <= 0
+                    : true;
 
-    const filteredPlayers =
-        players.filter(
-            player =>
-                player.name
-                    .toLowerCase()
-                    .includes(searchText)
-        );
+        return matchesSearch && matchesFilter;
+    });
 
+    // Sortierung anwenden
+    filteredPlayers.sort((a, b) => {
+        switch (sort) {
+            case "name":
+                return a.name.localeCompare(b.name, "de");
+
+            case "progress":
+                return b.progress - a.progress;
+
+            case "remaining":
+                return a.missing - b.missing;
+
+            case "credits":
+            default:
+                return b.credits - a.credits;
+        }
+    });
 
     if (filteredPlayers.length === 0) {
-
         container.innerHTML = `
             <div class="loading">
                 Kein Spieler gefunden.
             </div>
         `;
-
         return;
     }
 
+    // Rang eines Spielers anhand seiner Credits bestimmen
+    function getRank(player) {
+        return ranking.findIndex(
+            item => item.id === player.id
+        ) + 1;
+    }
 
-    container.innerHTML =
-        filteredPlayers
-            .map(
-                player =>
-                    createPlayerCard(player)
-            )
-            .join("");
-
+    container.innerHTML = filteredPlayers
+        .map(player => `
+            <div class="ranked-player">
+                <div class="rank-label">
+                    Platz ${getRank(player)}
+                </div>
+                ${createPlayerCard(player)}
+            </div>
+        `)
+        .join("");
 
     container
-        .querySelectorAll(
-            ".player-card"
-        )
+        .querySelectorAll(".player-card")
         .forEach(card => {
-
-            card.addEventListener(
-                "click",
-                () => {
-
-                    const playerId =
-                        card.dataset.playerId;
-
-                    showPlayer(
-                        playerId
-                    );
-
-                }
-            );
-
+            card.addEventListener("click", () => {
+                const playerId = card.dataset.playerId;
+                showPlayer(playerId);
+            });
         });
 }
+
 
 
 // =====================================================
