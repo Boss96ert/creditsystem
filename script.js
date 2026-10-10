@@ -11,6 +11,7 @@ const CONFIG = {
     // Namen der Tabellenblätter
     PLAYERS_SHEET: "Spieler",
     JOBS_SHEET: "Einsaetze",
+    WORK_DUTIES_SHEET: "Arbeitsdienste",
 
     // Saison
     SEASON: "2026/27",
@@ -115,6 +116,7 @@ function setupEvents() {
 // Google Sheets laden
 // =====================================================
 
+
 async function loadData() {
 
     showError("");
@@ -123,56 +125,49 @@ async function loadData() {
 
         if (
             !CONFIG.SHEET_ID ||
-            CONFIG.SHEET_ID ===
-            "DEINE_GOOGLE_SHEETS_ID"
+            CONFIG.SHEET_ID === "DEINE_GOOGLE_SHEETS_ID"
         ) {
-
             throw new Error(
                 "Die Google-Sheets-ID wurde noch nicht eingetragen."
             );
         }
 
-
         const playersUrl =
-            createSheetUrl(
-                CONFIG.PLAYERS_SHEET
-            );
+            createSheetUrl(CONFIG.PLAYERS_SHEET);
 
         const jobsUrl =
-            createSheetUrl(
-                CONFIG.JOBS_SHEET
-            );
+            createSheetUrl(CONFIG.JOBS_SHEET);
 
+        const workDutiesUrl =
+            createSheetUrl(CONFIG.WORK_DUTIES_SHEET);
 
         const [
             playersResponse,
-            jobsResponse
+            jobsResponse,
+            workDutiesResponse
         ] = await Promise.all([
-
             fetch(playersUrl),
-
-            fetch(jobsUrl)
-
+            fetch(jobsUrl),
+            fetch(workDutiesUrl)
         ]);
 
-
         if (!playersResponse.ok) {
-
             throw new Error(
                 "Das Tabellenblatt 'Spieler' konnte nicht geladen werden."
             );
-
         }
 
-
         if (!jobsResponse.ok) {
-
             throw new Error(
                 "Das Tabellenblatt 'Einsaetze' konnte nicht geladen werden."
             );
-
         }
 
+        if (!workDutiesResponse.ok) {
+            throw new Error(
+                "Das Tabellenblatt 'Arbeitsdienste' konnte nicht geladen werden."
+            );
+        }
 
         const playersCsv =
             await playersResponse.text();
@@ -180,28 +175,25 @@ async function loadData() {
         const jobsCsv =
             await jobsResponse.text();
 
+        const workDutiesCsv =
+            await workDutiesResponse.text();
 
-        players =
-            normalizePlayers(
-                parseCSV(playersCsv)
-            );
+        players = normalizePlayers(
+            parseCSV(playersCsv)
+        );
 
+        assignments = normalizeAssignments(
+            parseCSV(jobsCsv)
+        );
 
-        assignments =
-            normalizeAssignments(
-                parseCSV(jobsCsv)
-            );
-
+        workDuties = parseCSV(workDutiesCsv);
 
         calculateCredits();
 
-
         renderOverview();
 
-
-        // Falls URL bereits einen Spieler enthält
+        // Falls die URL bereits einen Spieler enthält
         showPlayerFromUrl();
-
 
     } catch (error) {
 
@@ -214,7 +206,6 @@ async function loadData() {
 
     }
 }
-
 
 // =====================================================
 // Google-Sheets-URL
