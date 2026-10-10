@@ -31,6 +31,7 @@ const CONFIG = {
 
 let players = [];
 let assignments = [];
+let workDuties = [];
 
 let teamChart = null;
 let playerChart = null;
