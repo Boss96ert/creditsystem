@@ -188,6 +188,7 @@ async function loadData() {
         );
 
         workDuties = parseCSV(workDutiesCsv);
+        console.log("Arbeitsdienste:", workDuties);
 
         calculateCredits();
 
