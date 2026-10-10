@@ -832,55 +832,53 @@ function createPlayerCard(player) {
 // Detailseite
 // =====================================================
 
+
 function showPlayer(playerId) {
 
     const player =
         players.find(
             player =>
-                player.id ===
-                String(playerId)
+                player.id === String(playerId)
         );
-
 
     if (!player) return;
 
-
     const detailPage =
-        document.getElementById(
-            "detailPage"
-        );
-
+        document.getElementById("detailPage");
 
     const overviewPage =
-        document.getElementById(
-            "overviewPage"
-        );
-
+        document.getElementById("overviewPage");
 
     const detail =
-        document.getElementById(
-            "playerDetail"
-        );
+        document.getElementById("playerDetail");
 
 
+    // Normale Einsätze des Spielers
     const playerAssignments =
         assignments
             .filter(
                 assignment =>
-                    assignment.playerId ===
-                    player.id
+                    assignment.playerId === player.id
             )
             .sort(
                 (a, b) =>
-                    parseDate(
-                        b.date
-                    ) -
-                    parseDate(
-                        a.date
-                    )
+                    parseDate(b.date) -
+                    parseDate(a.date)
             );
 
 
+    // Saisonale Arbeitsdienste des Spielers
+    const playerWorkDuties =
+        workDuties.filter(duty =>
+            String(duty.SpielerID).trim() ===
+                String(player.id).trim() &&
+
+            String(duty.Saison).trim() ===
+                CONFIG.SEASON
+        );
+
+
+    // Arbeitsdienste anzeigen, auch wenn sie nicht angerechnet werden
     detail.innerHTML = `
 
         <div class="detail-card">
@@ -893,73 +891,106 @@ function showPlayer(playerId) {
                 ${escapeHtml(player.name)}
             </h2>
 
-
             <div class="detail-main">
 
                 <div class="detail-stat">
-
-                    <span>
-                        Credits
-                    </span>
-
-                    <strong>
-                        ${player.credits}
-                    </strong>
-
+                    <span>Credits</span>
+                    <strong>${player.credits}</strong>
                 </div>
 
-
                 <div class="detail-stat">
-
-                    <span>
-                        Ziel
-                    </span>
-
-                    <strong>
-                        ${player.target}
-                    </strong>
-
+                    <span>Ziel</span>
+                    <strong>${player.target}</strong>
                 </div>
 
-
                 <div class="detail-stat">
+                    <span>Noch benötigt</span>
+                    <strong>${player.missing}</strong>
+                </div>
 
-                    <span>
-                        Noch benötigt
-                    </span>
+            </div>
 
-                    <strong>
-                        ${player.missing}
-                    </strong>
+            <div class="progress-wrapper">
 
+                <div class="progress-info">
+                    <span>Fortschritt</span>
+                    <span>${player.progress}%</span>
+                </div>
+
+                <div class="progress-bar">
+                    <div
+                        class="progress-fill"
+                        style="width: ${player.progress}%"
+                    ></div>
                 </div>
 
             </div>
 
 
-            <div class="progress-wrapper">
+            <div class="assignments">
 
-                <div class="progress-info">
-
-                    <span>
-                        Fortschritt
-                    </span>
-
-                    <span>
-                        ${player.progress}%
-                    </span>
-
+                <div class="section-label">
+                    SAISONALE ARBEITSDIENSTE
                 </div>
 
+                <h3>
+                    Meine Arbeitsdienste
+                </h3>
 
-                <div class="progress-bar">
+                ${
+                    playerWorkDuties.length > 0
+                        ? playerWorkDuties.map(duty => {
 
-                    <div
-                        class="progress-fill"
-                        style="width: ${player.progress}%"
-                    ></div>
+                            const isCounted =
+                                String(duty.Anrechnen)
+                                    .trim()
+                                    .toUpperCase() === "JA";
 
-                </div>
+                            const dutyCredits =
+                                Number(
+                                    String(duty.Credits)
+                                        .replace(",", ".")
+                                        .trim()
+                                ) || 0;
+
+                            return `
+                                <div class="assignment-card">
+
+                                    <h4>
+                                        ${escapeHtml(
+                                            String(duty.Arbeitsdienst || "")
+                                        )}
+                                    </h4>
+
+                                    <p>
+                                        Saison:
+                                        ${escapeHtml(
+                                            String(duty.Saison || "")
+                                        )}
+                                    </p>
+
+                                    <p>
+                                        Credits:
+                                        ${dutyCredits}
+                                    </p>
+
+                                    <p>
+                                        Status:
+                                        ${isCounted
+                                            ? "Angerechnet"
+                                            : "Noch nicht angerechnet"}
+                                    </p>
+
+                                </div>
+                            `;
+
+                        }).join("")
+                        : `
+                            <div class="loading">
+                                Keine saisonalen Arbeitsdienste für diese Saison eingetragen.
+                            </div>
+                        `
+                }
 
             </div>
 
@@ -974,15 +1005,12 @@ function showPlayer(playerId) {
                     Meine Einsätze
                 </h3>
 
-
                 ${
                     playerAssignments.length > 0
                         ? playerAssignments
                             .map(
                                 assignment =>
-                                    createAssignment(
-                                        assignment
-                                    )
+                                    createAssignment(assignment)
                             )
                             .join("")
                         : `
@@ -999,34 +1027,26 @@ function showPlayer(playerId) {
     `;
 
 
-    overviewPage.classList.add(
-        "hidden"
-    );
-
-    detailPage.classList.remove(
-        "hidden"
-    );
+    overviewPage.classList.add("hidden");
+    detailPage.classList.remove("hidden");
 
 
     window.history.pushState(
         {},
         "",
         "?spieler=" +
-        encodeURIComponent(
-            player.id
-        )
+        encodeURIComponent(player.id)
     );
 
 
-    renderPlayerChart(
-        player
-    );
+    renderPlayerChart(player);
 
 
     window.scrollTo({
         top: 0,
         behavior: "smooth"
     });
+
 }
 
 
