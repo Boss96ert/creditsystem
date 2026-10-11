@@ -1816,3 +1816,67 @@ function renderWorkPlanTimeline() {
         `;
     }).join("");
 }
+
+
+function renderWorkPlanTimeline() {
+    const container = document.getElementById("workPlanTimeline");
+
+    if (!container) {
+        console.error("Der Container workPlanTimeline wurde nicht gefunden.");
+        return;
+    }
+
+    if (!workPlan || workPlan.length === 0) {
+        container.innerHTML = "<p>Keine Arbeitseinsätze vorhanden.</p>";
+        return;
+    }
+
+    const events = workPlan
+        .filter(event => {
+            const status = String(event.Status || "").trim().toUpperCase();
+            return status !== "ENTWURF" && status !== "ABGESAGT";
+        })
+        .sort((a, b) => {
+            function toDate(value) {
+                const text = String(value || "").trim();
+
+                let match = text.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+                if (match) {
+                    return new Date(+match[1], +match[2] - 1, +match[3]);
+                }
+
+                match = text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+                if (match) {
+                    return new Date(+match[3], +match[2] - 1, +match[1]);
+                }
+
+                const date = new Date(text);
+                return isNaN(date) ? new Date(0) : date;
+            }
+
+            return toDate(a.Datum) - toDate(b.Datum);
+        });
+
+    if (events.length === 0) {
+        container.innerHTML = "<p>Aktuell sind keine anzuzeigenden Arbeitseinsätze vorhanden.</p>";
+        return;
+    }
+
+    container.innerHTML = events.map(event => {
+        const date = String(event.Datum || "").trim();
+        const name = String(event.Arbeitseinsatz || "Arbeitseinsatz").trim();
+        const credits = Number(String(event.Credits || 0).replace(",", ".")) || 0;
+        const status = String(event.Status || "Geplant").trim();
+
+        return `
+            <article class="work-plan-card">
+                <div class="work-plan-date">${date || "Termin folgt"}</div>
+                <div class="work-plan-content">
+                    <h3>${name}</h3>
+                    <p>${credits} Credits</p>
+                    <span class="work-plan-status">${status}</span>
+                </div>
+            </article>
+        `;
+    }).join("");
+}
