@@ -12,6 +12,7 @@ const CONFIG = {
     PLAYERS_SHEET: "Spieler",
     JOBS_SHEET: "Einsaetze",
     WORK_DUTIES_SHEET: "Arbeitsdienste",
+    WORK_PLAN_SHEET: "ArbeitseinsatzPlan",
 
     // Saison
     SEASON: "2026/27",
@@ -118,6 +119,7 @@ function setupEvents() {
 // =====================================================
 
 
+
 async function loadData() {
 
     showError("");
@@ -142,15 +144,22 @@ async function loadData() {
         const workDutiesUrl =
             createSheetUrl(CONFIG.WORK_DUTIES_SHEET);
 
+        const workPlanUrl =
+            createSheetUrl(CONFIG.WORK_PLAN_SHEET);
+
+
         const [
             playersResponse,
             jobsResponse,
-            workDutiesResponse
+            workDutiesResponse,
+            workPlanResponse
         ] = await Promise.all([
             fetch(playersUrl),
             fetch(jobsUrl),
-            fetch(workDutiesUrl)
+            fetch(workDutiesUrl),
+            fetch(workPlanUrl)
         ]);
+
 
         if (!playersResponse.ok) {
             throw new Error(
@@ -170,6 +179,13 @@ async function loadData() {
             );
         }
 
+        if (!workPlanResponse.ok) {
+            throw new Error(
+                "Das Tabellenblatt 'ArbeitseinsatzPlan' konnte nicht geladen werden."
+            );
+        }
+
+
         const playersCsv =
             await playersResponse.text();
 
@@ -178,6 +194,10 @@ async function loadData() {
 
         const workDutiesCsv =
             await workDutiesResponse.text();
+
+        const workPlanCsv =
+            await workPlanResponse.text();
+
 
         players = normalizePlayers(
             parseCSV(playersCsv)
@@ -188,14 +208,16 @@ async function loadData() {
         );
 
         workDuties = parseCSV(workDutiesCsv);
-        console.log("Arbeitsdienste:", workDuties);
+
+        workPlan = parseCSV(workPlanCsv);
+
 
         calculateCredits();
 
         renderOverview();
 
-        // Falls die URL bereits einen Spieler enthält
         showPlayerFromUrl();
+
 
     } catch (error) {
 
@@ -208,6 +230,7 @@ async function loadData() {
 
     }
 }
+
 
 // =====================================================
 // Google-Sheets-URL
