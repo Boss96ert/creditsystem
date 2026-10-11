@@ -535,7 +535,35 @@ function calculateTargetCredits() {
 
 function calculateCredits() {
 
-    const targetCredits = calculateTargetCredits();
+    const includedStatuses = [
+        "GEPLANT",
+        "NEU",
+        "ERLEDIGT"
+    ];
+
+    const plannedCredits = workPlan
+        .filter(event =>
+            includedStatuses.includes(
+                String(event.Status || "")
+                    .trim()
+                    .toUpperCase()
+            )
+        )
+        .reduce((sum, event) => {
+            const credits = Number(
+                String(event.Credits || 0)
+                    .replace(",", ".")
+                    .trim()
+            ) || 0;
+
+            return sum + credits;
+        }, 0);
+
+    const activePlayers = players.length;
+
+    const targetCredits = activePlayers > 0
+        ? Math.round(plannedCredits / activePlayers)
+        : 0;
 
     players.forEach(player => {
         player.target = targetCredits;
