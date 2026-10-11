@@ -1692,3 +1692,127 @@ function showOverviewPage() {
 
 document.getElementById("showWorkPlanButton").addEventListener("click", showWorkPlanPage);
 document.getElementById("backFromWorkPlanButton").addEventListener("click", showOverviewPage);
+
+
+function renderWorkPlanTimeline() {
+    const container = document.getElementById("workPlanTimeline");
+
+    if (!container) return;
+
+    // Entwürfe nicht anzeigen
+    const events = workPlan.filter(event => {
+        const status = String(event.Status || "")
+            .trim()
+            .toUpperCase();
+
+        return status !== "ENTWURF";
+    });
+
+    // Datum in ein sortierbares Format umwandeln
+    function parseEventDate(value) {
+        const dateString = String(value || "").trim();
+
+        // Format TT.MM.JJJJ
+        const germanDate = dateString.match(
+            /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/
+        );
+
+        if (germanDate) {
+            return new Date(
+                Number(germanDate[3]),
+                Number(germanDate[2]) - 1,
+                Number(germanDate[1])
+            );
+        }
+
+        // Andere Datumsformate, z. B. JJJJ-MM-TT
+        const date = new Date(dateString);
+
+        return isNaN(date.getTime()) ? null : date;
+    }
+
+    // HTML-Sonderzeichen aus Tabellenwerten absichern
+    function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, char => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        })[char]);
+    }
+
+    // Älteste Termine zuerst
+    events.sort((a, b) => {
+        const dateA = parseEventDate(a.Datum);
+        const dateB = parseEventDate(b.Datum);
+
+        if (!dateA && !dateB) return 0;
+        if (!dateA) return 1;
+        if (!dateB) return -1;
+
+        return dateA - dateB;
+    });
+
+    if (events.length === 0) {
+        container.innerHTML = `
+            <div class="loading">
+                Aktuell sind keine Arbeitseinsätze eingetragen.
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = events.map(event => {
+        const date = parseEventDate(event.Datum);
+
+        const formattedDate = date
+            ? date.toLocaleDateString("de-DE", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric"
+            })
+            : String(event.Datum || "Datum offen");
+
+        const status = String(event.Status || "Geplant").trim();
+        const normalizedStatus = status.toUpperCase();
+
+        let statusClass = "status-planned";
+
+        if (normalizedStatus === "NEU") {
+            statusClass = "status-new";
+        } else if (normalizedStatus === "ERLEDIGT") {
+            statusClass = "status-done";
+        } else if (normalizedStatus === "ABGESAGT") {
+            statusClass = "status-cancelled";
+        }
+
+        const credits = Number(
+            String(event.Credits || 0).replace(",", ".")
+        ) || 0;
+
+        return `
+            <article class="work-plan-card">
+                <div class="timeline-marker"></div>
+
+                <div class="work-plan-date">
+                    ${escapeHTML(formattedDate)}
+                </div>
+
+                <div class="work-plan-content">
+                    <span class="work-plan-status ${statusClass}">
+                        ${escapeHTML(status)}
+                    </span>
+
+                    <h3>
+                        ${escapeHTML(event.Arbeitseinsatz || "Arbeitseinsatz")}
+                    </h3>
+
+                    <p class="work-plan-credits">
+                        ${credits} Credits
+                    </p>
+                </div>
+            </article>
+        `;
+    }).join("");
+}
