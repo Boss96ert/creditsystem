@@ -496,7 +496,50 @@ function normalizeAssignments(data) {
 // =====================================================
 
 
+function calculateTargetCredits() {
+
+    const includedStatuses = [
+        "GEPLANT",
+        "NEU",
+        "ERLEDIGT"
+    ];
+
+    const plannedCredits = workPlan
+        .filter(event => {
+            const status = String(
+                event.Status || ""
+            ).trim().toUpperCase();
+
+            return includedStatuses.includes(status);
+        })
+        .reduce((sum, event) => {
+            const credits = Number(
+                String(event.Credits || 0)
+                    .replace(",", ".")
+                    .trim()
+            ) || 0;
+
+            return sum + credits;
+        }, 0);
+
+    const activePlayers = players.length;
+
+    if (activePlayers === 0) {
+        return 0;
+    }
+
+    return Math.round(
+        plannedCredits / activePlayers
+    );
+}
+
 function calculateCredits() {
+
+    const targetCredits = calculateTargetCredits();
+
+    players.forEach(player => {
+        player.target = targetCredits;
+    });
 
     players.forEach(player => {
 
