@@ -1674,13 +1674,26 @@ function escapeHtml(
         );
 }
 
+
 function showWorkPlanPage() {
     document.getElementById("overviewPage").classList.add("hidden");
     document.getElementById("detailPage").classList.add("hidden");
-    document.getElementById("workPlanPage").classList.remove("hidden");
 
-    window.scrollTo(0, 0);
+    const page = document.getElementById("workPlanPage");
+    page.classList.remove("hidden");
+    page.style.display = "block";
+    page.style.visibility = "visible";
+
+    renderWorkPlanTimeline();
+
+    requestAnimationFrame(() => {
+        page.scrollIntoView({
+            behavior: "auto",
+            block: "start"
+        });
+    });
 }
+
 
 function showOverviewPage() {
     document.getElementById("workPlanPage").classList.add("hidden");
