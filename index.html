@@ -27,6 +27,12 @@
         <!-- Übersicht -->
         <section id="overviewPage">
 
+            <div class="timeline-navigation">
+                <button id="showWorkPlanButton" class="back-button">
+                    📅 Geplante Arbeitseinsätze ansehen →
+                </button>
+            </div>
+
             <div class="hero-card">
                 <div>
                     <span class="hero-label">TEAMÜBERSICHT</span>
@@ -159,6 +165,33 @@
 
             </section>
 
+        </section>
+
+        
+        <!-- Arbeitseinsatz-Zeitachse -->
+        <section id="workPlanPage" class="hidden">
+        
+            <button id="backFromWorkPlanButton" class="back-button">
+                ← Zurück zur Übersicht
+            </button>
+        
+            <div class="hero-card">
+                <div>
+                    <span class="hero-label">TERMINE</span>
+                    <h2>Geplante Arbeitseinsätze</h2>
+                    <p>
+                        Hier findest du alle geplanten Arbeitseinsätze
+                        und die dazugehörigen Credits.
+                    </p>
+                </div>
+            </div>
+        
+            <div id="workPlanTimeline" class="work-plan-timeline">
+                <div class="loading">
+                    Arbeitseinsätze werden geladen...
+                </div>
+            </div>
+        
         </section>
 
 
