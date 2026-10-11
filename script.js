@@ -1539,10 +1539,14 @@ function showOverviewPage() {
     window.scrollTo(0, 0);
 }
 
-document.getElementById("showWorkPlanButton").addEventListener("click", showWorkPlanPage);
 
-document.getElementById("backFromWorkPlanButton").addEventListener("click", showOverviewPage);
+document.getElementById("showWorkPlanButton").onclick = function () {
+    showWorkPlanPage();
+};
 
+document.getElementById("backFromWorkPlanButton").onclick = function () {
+    showOverviewPage();
+};
 
 function showPlayerFromUrl() {
 
