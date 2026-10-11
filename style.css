@@ -652,3 +652,98 @@ body {
     }
 
 }
+
+
+/* ==============================
+   Arbeitseinsatz-Zeitachse
+   ============================== */
+
+.timeline-navigation {
+    margin-bottom: 20px;
+}
+
+.work-plan-timeline {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 24px 0;
+    padding: 0 0 0 22px;
+}
+
+.work-plan-timeline::before {
+    content: "";
+    position: absolute;
+    left: 7px;
+    top: 12px;
+    bottom: 12px;
+    width: 3px;
+    background: #dbe4ee;
+    border-radius: 3px;
+}
+
+.work-plan-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 18px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+}
+
+.work-plan-card::before {
+    content: "";
+    position: absolute;
+    left: -22px;
+    top: 22px;
+    width: 13px;
+    height: 13px;
+    background: #2563eb;
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px #2563eb;
+}
+
+.work-plan-date {
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.work-plan-content h3 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 1.1rem;
+    line-height: 1.4;
+}
+
+.work-plan-content p {
+    margin: 10px 0;
+    color: #2563eb;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.work-plan-status {
+    display: inline-block;
+    width: fit-content;
+    padding: 5px 10px;
+    color: #475569;
+    background: #f1f5f9;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+@media (min-width: 600px) {
+    .work-plan-card {
+        padding: 22px;
+    }
+
+    .work-plan-content h3 {
+        font-size: 1.2rem;
+    }
+}
