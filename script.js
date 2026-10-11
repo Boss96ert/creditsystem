@@ -1509,6 +1509,30 @@ function showOverview() {
 // Spieler anhand URL öffnen
 // =====================================================
 
+
+function showWorkPlanPage() {
+    document.getElementById("overviewPage").classList.add("hidden");
+    document.getElementById("detailPage").classList.add("hidden");
+    document.getElementById("workPlanPage").classList.remove("hidden");
+
+    renderWorkPlanTimeline();
+
+    window.scrollTo(0, 0);
+}
+
+function showOverviewPage() {
+    document.getElementById("workPlanPage").classList.add("hidden");
+    document.getElementById("detailPage").classList.add("hidden");
+    document.getElementById("overviewPage").classList.remove("hidden");
+
+    window.scrollTo(0, 0);
+}
+
+document.getElementById("showWorkPlanButton").addEventListener("click", showWorkPlanPage);
+
+document.getElementById("backFromWorkPlanButton").addEventListener("click", showOverviewPage);
+
+
 function showPlayerFromUrl() {
 
     const params =
